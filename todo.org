@@ -1,6 +1,6 @@
-* threaded iters
+* tigers
 ** perf cmp between iters & chan/thread
-* add fifo iter
+* add fifo iter like table & index
 * add table/index encryption
 ** add database-password
 *** use as crypt key
