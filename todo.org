@@ -1,4 +1,4 @@
-* fix run-suite dependency between tiger & index-tests
+* fix run-suite problems with tiger & index-tests
 * add table/index encryption
 ** add database-password
 *** use as crypt key

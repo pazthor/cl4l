@@ -1,6 +1,6 @@
 (defpackage cl4l-tiger
-  (:export define-tiger do-tiger tiger-next tiger-start tiger-stop
-           tiger-yield)
+  (:export define-tiger do-tiger tiger-join tiger-next
+           tiger-start tiger-stop tiger-yield)
   (:shadowing-import-from bordeaux-threads
                           destroy-thread make-thread thread-yield)
   (:shadowing-import-from cl4l-utils
@@ -57,23 +57,3 @@
 
 (defun tiger-next (self)
   (chan-get (tgr-chan self)))
-
-(defparameter *test-threads* 4)
-
-(defmethod run-suite :around (run &key)
-  (tiger-start *test-threads*)
-  (call-next-method)
-  (tiger-stop *test-threads*)
-  (tiger-join))
-
-(defparameter *test-max* 1000)
-
-(define-test (:tiger :do-tiger)
-  (let ((tgr (define-tiger (*test-max*)
-                 (dotimes (i *test-max*)
-                   (tiger-yield i))))
-        (j 0))
-    (do-tiger (tgr i)
-      (assert (= j i))
-      (incf j))
-    (assert (= *test-max* j))))

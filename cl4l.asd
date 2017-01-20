@@ -26,4 +26,5 @@
                (:file "iter-tests")
                (:file "memoize-tests")
                (:file "table-tests")
+               (:file "tiger-tests")
                (:file "utils-tests")))
