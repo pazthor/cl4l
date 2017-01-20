@@ -1,4 +1,5 @@
 * fix run-suite problems with tiger & index-tests
+** add text fixtures to replace method
 * add table/index encryption
 ** add database-password
 *** use as crypt key
