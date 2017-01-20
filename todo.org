@@ -1,4 +1,4 @@
-* add fifo iter like table & index
+* fix run-suite dependency between tiger & index-tests
 * add table/index encryption
 ** add database-password
 *** use as crypt key
