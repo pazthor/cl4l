@@ -1,6 +1,8 @@
 (defpackage cl4l-tiger
   (:export define-tiger do-tiger join-tigers
-           start-tigers stop-tigers tiger-next tiger-yield)
+           make-tiger-context
+           start-tigers stop-tigers tiger-next tiger-yield
+           with-tiger-context *tiger-context*)
   (:shadowing-import-from bordeaux-threads
                           destroy-thread make-thread thread-yield)
   (:shadowing-import-from cl4l-utils
@@ -9,18 +11,27 @@
 
 (in-package cl4l-tiger)
 
-(defvar *tiger-threads* nil)
-(defparameter *tiger-max-queue* 16)
-(defvar *queue* (make-chan :max-length *tiger-max-queue*))
+(defvar *tiger-context*)
 
-(defstruct (tiger (:conc-name tgr-) (:constructor make-tgr))
+(defstruct (tiger (:conc-name tgr-)
+                  (:constructor make-tgr))
   chan)
 
-(defmacro define-tiger ((max-length) &body body)
+(defstruct (tiger-context (:conc-name cx-)
+                          (:constructor make-cx))
+  threads queue)
+
+(defun make-tiger-context (&key (max-queue 0))
+  (make-cx :queue (make-chan :max-length max-queue)))
+
+(defmacro define-tiger ((&key context
+                              (max-stride 0))
+                        &body body)
   (with-symbols (_chan _tgr)
-    `(let* ((,_chan (make-chan :max-length ,max-length))
+    `(let* ((,_chan (make-chan :max-length ,max-stride))
             (,_tgr (make-tgr :chan ,_chan)))
-       (chan-put *queue* (lambda ()
+       (chan-put (cx-queue (or ,context *tiger-context*))
+                 (lambda ()
                            (macrolet ((tiger-yield (it)
                                         `(chan-put ,',_chan ,it)))
                              ,@body
@@ -35,25 +46,34 @@
           ,@body
           (go ,_start)))))
 
-(defun tiger-loop ()
+(defmacro with-tiger-context ((&key context (max-queue 0))
+                              &body body)
+  "Executes BODY in context" 
+  `(let ((*tiger-context* (or ,context
+                              (make-tiger-context :max-queue
+                                                  ,max-queue))))
+     ,@body))
+
+(defun tiger-loop (context)
   (tagbody 
    start
-     (when-let (fn (chan-get *queue*))
+     (when-let (fn (chan-get (cx-queue context)))
        (funcall fn)
        (go start))))
 
-(defun start-tigers (nthreads)
+(defun start-tigers (nthreads &key (context *tiger-context*))
   (dotimes (_ nthreads)
-    (push (make-thread #'tiger-loop) *tiger-threads*)))
+    (push (make-thread (lambda () (tiger-loop context)))
+          (cx-threads context))))
 
-(defun stop-tigers (nthreads)
+(defun stop-tigers (nthreads &key (context *tiger-context*))
   (dotimes (_ nthreads)
-    (chan-put *queue* nil)))
+    (chan-put (cx-queue context) nil)))
 
-(defun join-tigers ()
-  (dolist (thread *tiger-threads*)
+(defun join-tigers (&key (context *tiger-context*))
+  (dolist (thread (cx-threads context))
     (destroy-thread thread))
-  (setf *tiger-threads* nil))
+  (setf (cx-threads context) nil))
 
 (defun tiger-next (self)
   (chan-get (tgr-chan self)))

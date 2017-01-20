@@ -14,7 +14,7 @@
     (join-tigers)))
 
 (define-test (:tiger :do-tiger)
-  (let ((tgr (define-tiger (*test-max*)
+  (let ((tgr (define-tiger (:max-stride *test-max*)
                (dotimes (i *test-max*)
                  (tiger-yield i))))
         (j 0))

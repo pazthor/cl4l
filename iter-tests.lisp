@@ -28,7 +28,7 @@
         (assert (= (pop res) j))))))
 
 (define-test (:iter :perf :tiger)
-  (let ((tgr (define-tiger (*test-max*)
+  (let ((tgr (define-tiger (:max-stride *test-max*)
                (dotimes (i *test-max*)
                  (tiger-yield i)))))
     (dotimes (j *test-max*)
