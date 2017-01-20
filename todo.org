@@ -1,7 +1,8 @@
 * fix run-suite problems with tiger & index-tests
 ** add text fixtures to replace method
 * add make-tiger-context & WITH-TIGER-CONTEXT
-** list()
+** threads & queue
+** add context params to all fns
 * add table-tiger / index-tiger fns
 ** take &key (max-stride 0) as param
 ** take fn to exec with item in thread
