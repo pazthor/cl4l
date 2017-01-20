@@ -1,5 +1,3 @@
-* tigers
-** perf cmp between iters & chan/thread
 * add fifo iter like table & index
 * add table/index encryption
 ** add database-password

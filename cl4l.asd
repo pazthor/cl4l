@@ -17,6 +17,7 @@
                (:file "fifo")
                (:file "semaphore")
                (:file "chan")
+               (:file "tiger")
                (:file "memoize")
                (:file "chan-tests")
                (:file "crypt-tests")

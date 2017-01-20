@@ -68,14 +68,11 @@
 (defmacro do-hash-table ((tbl key val &key result) &body body)
   (with-symbols (_found _iter)
     `(with-hash-table-iterator (,_iter ,tbl)
-       (tagbody
-        start
+       (do () (nil)
           (multiple-value-bind (,_found ,key ,val) (,_iter)
             (declare (ignorable ,key ,val))
-            (unless ,_found (go end))
-            ,@body)
-          (go start)
-        end)
+            (unless ,_found (return))
+            ,@body))
        ,result)))
 
 (defun key-gen (key)

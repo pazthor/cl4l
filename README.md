@@ -25,6 +25,9 @@ Welcome to cl4l. The project supports asdf and may be loaded by calling ```(ql:q
 ### channels
 ```chan.lisp``` implements optionally buffered channels on top of fifo queues and semaphores.
 
+### multi-threaded generators
+```tiger.lisp``` implements an extensible multi-threaded generator protocol on top of channels.
+
 ### tests
 ```test.lisp``` implements a test framework using tags to group and trigger tests dynamically.
 

@@ -17,8 +17,8 @@
 
 (defun fifo-push (self it)
   "Adds IT to end of SELF"
-  (if (null (qhead self))
-      (setf (qtail self) (setf (qhead self) (list it)))
+  (if (qhead self)
       (setf (rest (qtail self)) (list it)
-            (qtail self) (rest (qtail self))))
+            (qtail self) (rest (qtail self)))
+      (setf (qtail self) (setf (qhead self) (list it))))
   it)
