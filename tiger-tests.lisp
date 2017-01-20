@@ -7,10 +7,11 @@
 (defparameter *test-threads* 4)
 
 (defmethod run-suite :around (run &key)
-  (tiger-start *test-threads*)
-  (call-next-method)
-  (tiger-stop *test-threads*)
-  (tiger-join))
+  (with-tiger-context ()
+    (start-tigers *test-threads*)
+    (call-next-method)
+    (stop-tigers *test-threads*)
+    (join-tigers)))
 
 (define-test (:tiger :do-tiger)
   (let ((tgr (define-tiger (*test-max*)

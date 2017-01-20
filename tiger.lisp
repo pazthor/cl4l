@@ -1,6 +1,6 @@
 (defpackage cl4l-tiger
-  (:export define-tiger do-tiger tiger-join tiger-next
-           tiger-start tiger-stop tiger-yield)
+  (:export define-tiger do-tiger join-tigers
+           start-tigers stop-tigers tiger-next tiger-yield)
   (:shadowing-import-from bordeaux-threads
                           destroy-thread make-thread thread-yield)
   (:shadowing-import-from cl4l-utils
@@ -42,15 +42,15 @@
        (funcall fn)
        (go start))))
 
-(defun tiger-start (nthreads)
+(defun start-tigers (nthreads)
   (dotimes (_ nthreads)
     (push (make-thread #'tiger-loop) *tiger-threads*)))
 
-(defun tiger-stop (nthreads)
+(defun stop-tigers (nthreads)
   (dotimes (_ nthreads)
     (chan-put *queue* nil)))
 
-(defun tiger-join ()
+(defun join-tigers ()
   (dolist (thread *tiger-threads*)
     (destroy-thread thread))
   (setf *tiger-threads* nil))
